@@ -34,23 +34,39 @@ document.addEventListener("keydown", (event) => {
 
 // Highlight the navigation item for the section currently in view.
 const sections = [...document.querySelectorAll("main section[id]")];
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (!entry.isIntersecting) return;
+if ("IntersectionObserver" in window) {
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
 
-    navigationLinks.forEach((link) => {
-      const isCurrentSection = link.getAttribute("href") === `#${entry.target.id}`;
-      link.classList.toggle("is-active", isCurrentSection);
-      if (isCurrentSection) {
-        link.setAttribute("aria-current", "location");
-      } else {
-        link.removeAttribute("aria-current");
-      }
+      navigationLinks.forEach((link) => {
+        const isCurrentSection = link.getAttribute("href") === `#${entry.target.id}`;
+        link.classList.toggle("is-active", isCurrentSection);
+        if (isCurrentSection) {
+          link.setAttribute("aria-current", "location");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+    });
+  }, { rootMargin: "-30% 0px -60% 0px" });
+
+  sections.forEach((section) => sectionObserver.observe(section));
+} else {
+  navigationLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      navigationLinks.forEach((navigationLink) => {
+        const isCurrentSection = navigationLink === link;
+        navigationLink.classList.toggle("is-active", isCurrentSection);
+        if (isCurrentSection) {
+          navigationLink.setAttribute("aria-current", "location");
+        } else {
+          navigationLink.removeAttribute("aria-current");
+        }
+      });
     });
   });
-}, { rootMargin: "-30% 0px -60% 0px" });
-
-sections.forEach((section) => sectionObserver.observe(section));
+}
 
 const revealElements = document.querySelectorAll(".reveal");
 if ("IntersectionObserver" in window) {

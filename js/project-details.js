@@ -57,7 +57,10 @@ const projects = {
 };
 
 const params = new URLSearchParams(window.location.search);
-const project = projects[params.get("project")];
+const projectId = params.get("project");
+const project = Object.prototype.hasOwnProperty.call(projects, projectId)
+  ? projects[projectId]
+  : undefined;
 const projectCard = document.querySelector("#project-details-card");
 const errorMessage = document.querySelector("#project-details-error");
 
